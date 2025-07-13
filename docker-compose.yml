@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  # NGINX Load Balancer
+  nginx:
+    image: nginx:1.25.3-alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "9999:9999"
+    depends_on:
+      - api1
+      - api2
+    deploy:
+      resources:
+        limits:
+          cpus: "0.15"
+          memory: "25MB"
+    networks:
+      - backend
+      - payment-processor
+
+
+  # API - Primeira Instância
+  api1:
+    build: .
+    hostname: api1
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/rinha?schema=public
+      - REDIS_URL=redis://redis:6379
+      - PORT=3000
+      - PAYMENT_PROCESSOR_DEFAULT_URL=http://payment-processor-default:8080
+      - PAYMENT_PROCESSOR_FALLBACK_URL=http://payment-processor-fallback:8080
+    depends_on:
+      - db
+      - redis
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "100MB"
+    command: sh -c "sleep 5 && npx prisma migrate deploy && node dist/server.js"
+    networks:
+      - backend
+      - payment-processor
+
+  # API - Segunda Instância
+  api2:
+    build: .
+    hostname: api2
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/rinha?schema=public
+      - REDIS_URL=redis://redis:6379
+      - PORT=3000
+      - PAYMENT_PROCESSOR_DEFAULT_URL=http://payment-processor-default:8080
+      - PAYMENT_PROCESSOR_FALLBACK_URL=http://payment-processor-fallback:8080
+    depends_on:
+      - db
+      - redis
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "100MB"
+    command: sh -c "sleep 5 && npx prisma migrate deploy && node dist/server.js"
+    networks:
+      - backend
+      - payment-processor
+
+  # Banco de Dados PostgreSQL
+  db:
+    image: postgres:16-alpine
+    hostname: db
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=rinha
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: "100MB"
+    networks:
+      - backend
+
+  # Banco em Memória Redis
+  redis:
+    image: redis:7.2-alpine
+    hostname: redis
+    deploy:
+      resources:
+        limits:
+          cpus: "0.10"
+          memory: "25MB"
+    networks:
+      - backend
+
+volumes:
+  pgdata:
+
+networks:
+  backend:
+    driver: bridge
+  payment-processor: # Declaração da rede externa
+    external: true

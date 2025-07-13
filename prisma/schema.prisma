@@ -1,0 +1,19 @@
+// prisma/schema.prisma
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  correlationId String   @unique
+  amount        Decimal  @db.Decimal(10, 2)
+  processor     String
+  status        String
+  createdAt     DateTime @default(now())
+}
