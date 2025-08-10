@@ -10,6 +10,6 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/server.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

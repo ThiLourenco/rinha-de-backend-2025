@@ -1,32 +1,34 @@
 import express from 'express';
 import 'dotenv/config';
 import paymentRoutes from './routes/payment.routes';
+import { redisClient, redisUrl } from './lib/redis';
 import { startHealthChecks } from './services/healthCheck.service';
-import { redisClient } from './lib/redis';
-import { prisma } from './lib/prisma';
+import { startWorker } from './worker';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(express.json());
-app.use(paymentRoutes);
-
-const startServer = async () => {
+const initializeApp = async () => {
     try {
-        await redisClient.ping();
+        await redisClient.connect();
         console.log('Successfully connected to Redis.');
-        
-        await prisma.$connect();
-        console.log('Successfully connected to PostgreSQL.');
+
+        app.use(express.json());
+
+        app.use(paymentRoutes);
+        app.get('/health', (req, res) => res.status(200).send('OK'));
 
         app.listen(port, () => {
-            console.log(`Server is running on port ${port}`);
-            startHealthChecks();
+            console.log(`🚀 Server is running on port ${port}`);
         });
+
+        startWorker(redisUrl!);
+        startHealthChecks();
+
     } catch (error) {
-        console.error('Failed to start server:', error);
+        console.error('Failed to start the application:', error);
         process.exit(1);
     }
 };
 
-startServer();
+initializeApp();
