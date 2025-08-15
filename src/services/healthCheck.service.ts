@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { redisClient } from '../lib/redis';
-import 'dotenv/config';
 import { ProcessorTypes } from '../types';
 
 const DEFAULT_PROCESSOR_URL = process.env.PAYMENT_PROCESSOR_DEFAULT_URL!;
@@ -58,6 +57,7 @@ export const getHealthProcessor = async (): Promise<ProcessorTypes> => {
     }
 
     let processor: ProcessorTypes;
+
     if (
       defaultHealth.failing ||
       fallbackHealth.minResponseTime < defaultHealth.minResponseTime
@@ -78,7 +78,7 @@ export const getHealthProcessor = async (): Promise<ProcessorTypes> => {
 };
 
 export const startHealthChecks = () => {
-  console.log('[***] Starting background health checks...[***]');
+  console.log('[***] Starting health checks...[***]');
 
   const runCheck = async () => {
     const [defaultHealth, fallbackHealth] = await Promise.all([

@@ -1,9 +1,6 @@
 import express from 'express';
-import 'dotenv/config';
 import paymentRoutes from './routes/payment.routes';
-import { redisClient, redisUrl } from './lib/redis';
-import { startHealthChecks } from './services/healthCheck.service';
-import { startWorker } from './worker';
+import { redisClient  } from './lib/redis';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -21,9 +18,6 @@ const initializeApp = async () => {
         app.listen(port, () => {
             console.log(`🚀 Server is running on port ${port}`);
         });
-
-        startWorker(redisUrl!);
-        startHealthChecks();
 
     } catch (error) {
         console.error('Failed to start the application:', error);

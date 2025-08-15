@@ -41,8 +41,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.50"
-          memory: "90MB"
+          cpus: "0.40"
+          memory: "80MB"
     networks:
       - backend
       - payment-processor
@@ -51,14 +51,34 @@ services:
     <<: *api
     hostname: api2
 
+  worker1: &worker
+    build: .
+    hostname: worker1
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - PAYMENT_PROCESSOR_DEFAULT_URL=http://payment-processor-default:8080
+      - PAYMENT_PROCESSOR_FALLBACK_URL=http://payment-processor-fallback:8080
+    depends_on:
+      redis: 
+        condition: service_healthy
+    command: node dist/worker.js
+    deploy:
+      resources:
+        limits:
+          cpus: "0.30"
+          memory: "80MB"
+    networks:
+      - backend
+      - payment-processor
+
   redis:
     image: redis:7.2-alpine
     hostname: redis
     deploy:
       resources:
         limits:
-          cpus: "0.40"
-          memory: "140MB"
+          cpus: "0.20"
+          memory: "80MB"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s

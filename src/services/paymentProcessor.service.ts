@@ -1,5 +1,4 @@
 import axios from 'axios';
-import 'dotenv/config';
 
 const DEFAULT_PROCESSOR_URL = process.env.PAYMENT_PROCESSOR_DEFAULT_URL;
 const FALLBACK_PROCESSOR_URL = process.env.PAYMENT_PROCESSOR_FALLBACK_URL;
@@ -21,7 +20,7 @@ export const processPaymentWithProvider = async (
   };
 
   try {
-    const response = await axios.post(`${url}/payments`, body, { timeout: 4000 }); // ms
+    const response = await axios.post(`${url}/payments`, body, { timeout: 3600 }); // ms
     return response.status >= 200 && response.status < 300;
   } catch (error) {
     console.error(`Error processing payment with ${processor} processor:`, error instanceof Error ? error.message : error);
