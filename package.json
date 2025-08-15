@@ -12,7 +12,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^5.15.0",
     "axios": "^1.7.2",
     "bullmq": "^5.56.9",
     "dotenv": "^16.4.5",
@@ -22,7 +21,6 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.2",
-    "prisma": "^5.15.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.5"
   }
