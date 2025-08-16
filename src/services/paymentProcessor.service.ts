@@ -20,7 +20,7 @@ export const processPaymentWithProvider = async (
   };
 
   try {
-    const response = await axios.post(`${url}/payments`, body, { timeout: 3600 }); // ms
+    const response = await axios.post(`${url}/payments`, body, { timeout: 3500 }); // ms
     return response.status >= 200 && response.status < 300;
   } catch (error) {
     console.error(`Error processing payment with ${processor} processor:`, error instanceof Error ? error.message : error);
