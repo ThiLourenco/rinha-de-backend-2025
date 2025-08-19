@@ -9,3 +9,6 @@ Esse projeto foi criado para o desafio da Rinha de backend 2025 [repo oficial](h
 - Redis
 - Docker
 - Docker Compose
+
+Minha parcial da primeira participação;
+<img src="./asserts/rinha.png">
