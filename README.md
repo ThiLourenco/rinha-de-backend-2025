@@ -12,3 +12,6 @@ Esse projeto foi criado para o desafio da Rinha de backend 2025 [repo oficial](h
 
 Minha parcial da primeira participação;
 <img src="./asserts/rinha.png">
+
+Resultado Final;
+<img src="./asserts/node-final.png">
